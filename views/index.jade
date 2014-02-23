@@ -2,4 +2,44 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  // p Welcome to #{title}
+  #debug
+    .x
+    .y
+    .z
+  script(type='text/javascript').
+    var socket = io.connect('//mojimoji.herokuapp.com:80');
+    var x, y, r;
+    var width, height;
+    var fx, fy;
+    var m = 10;
+
+    socket.on('connect', function(data){
+      console.log(data);
+      $('h1').html(socket.socket.sessionid);
+    });
+    socket.on('init', function(data){
+      console.log(data);
+      width = data.width;
+      height= data.height;
+      x = width/2;
+      y = height/2;
+      r = 20;
+    });
+    socket.emit('set message', {message: 'ios web'});
+    socket.emit('set radius', {r: 20});
+
+    $(window).on('devicemotion', function(e){
+      var ax = e.originalEvent.accelerationIncludingGravity.x;
+      var ay = e.originalEvent.accelerationIncludingGravity.y;
+      var az = e.originalEvent.accelerationIncludingGravity.z;
+      var gx = ax - e.originalEvent.acceleration.x;
+      var gy = ay - e.originalEvent.acceleration.y;
+      var gz = az - e.originalEvent.acceleration.z;
+      var gmag = Math.sqrt(gx*gx + gy*gy + gz*gz);
+      $('#debug .x').text('x:' + gx/gmag);
+      $('#debug .y').text('y:' + gy/gmag);
+      $('#debug .z').text('z:' + gz/gmag);
+      socket.emit('set gravity', {gx:gx/gmag, gy:gy/gmag});
+    });
+
