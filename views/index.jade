@@ -7,6 +7,7 @@ block content
     .x
     .y
     .z
+  button#set set message, radius
   script(type='text/javascript').
     var socket = io.connect('//mojimoji.herokuapp.com:80');
     var x, y, r;
@@ -26,8 +27,11 @@ block content
       y = height/2;
       r = 20;
     });
-    socket.emit('set message', {message: 'ios web'});
-    socket.emit('set radius', {r: 20});
+
+    $('#set').on('click', function(){
+      socket.emit('set message', {message: 'ios web'});
+      socket.emit('set radius', {r: 20});
+      });
 
     $(window).on('devicemotion', function(e){
       var ax = e.originalEvent.accelerationIncludingGravity.x;
