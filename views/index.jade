@@ -7,7 +7,14 @@ block content
     .x
     .y
     .z
-  button#set set message, radius
+  a#set set message, radius
+  ul
+    li
+      a#shield shield
+    li
+      a#charge charge
+    li
+      a#attack attack
   script(type='text/javascript').
     var socket = io.connect('//mojimoji.herokuapp.com:80');
     var x, y, r;
@@ -28,9 +35,27 @@ block content
       r = 20;
     });
 
-    $('#set').on('click', function(){
+    $('#set').on('click touchstart', function(){
       socket.emit('set message', {message: 'ios web'});
-      socket.emit('set radius', {r: 20});
+      });
+    $('#shield').on('click touchstart', function(){
+      if($(this).hasClass('on')){
+        socket.emit('end shielding', null);
+        $(this).removeClass('on');
+      }else{
+        socket.emit('start shielding', null);
+        $(this).addClass('on');
+      }});
+    $('#charge').on('click touchstart', function(){
+      if($(this).hasClass('on')){
+        socket.emit('end charging', null);
+        $(this).removeClass('on');
+      }else{
+        socket.emit('start charging', null);
+        $(this).addClass('on');
+      }});
+    $('#attack').on('click touchstart', function(){
+        socket.emit('attack', null);
       });
 
     $(window).on('devicemotion', function(e){
